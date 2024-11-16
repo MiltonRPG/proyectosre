@@ -1,0 +1,80 @@
+
+replicaCount: 1  # Número de réplicas iniciales del deployment
+
+image:
+  repository: miltonrpg/proyectosre  # El nombre de la imagen que usarás
+  pullPolicy: IfNotPresent  # Política de obtención de la imagen (cambiar a Always si deseas obtener siempre la última imagen)
+  tag: latest  # Etiqueta de la imagen que deseas usar
+
+# Opcional: Si necesitas acceder a imágenes de un registro privado
+imagePullSecrets: []
+nameOverride: ""  # Puedes sobrescribir el nombre del chart
+fullnameOverride: ""  # Puedes sobrescribir el nombre completo del chart
+
+serviceAccount:
+  create: true  # Indica si se debe crear una cuenta de servicio
+  annotations: {}  # Anotaciones para la cuenta de servicio
+  name: ""  # Nombre personalizado para la cuenta de servicio
+
+podAnnotations: {}  # Anotaciones adicionales para los pods
+podLabels: {}  # Etiquetas adicionales para los pods
+
+podSecurityContext: {}
+  # fsGroup: 2000  # Puedes establecer el fsGroup para manejar permisos
+
+securityContext: {}
+
+service:
+  type: ClusterIP  # Tipo de servicio (NodePort, LoadBalancer o ClusterIP)
+  port: 8081  # Cambié a 8081 porque tu aplicación FastAPI usa este puerto
+
+ingress:
+  enabled: false  # Cambiar a true si deseas habilitar Ingress
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  # Configurar límites y solicitudes de recursos para el contenedor
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8081  # Cambié a 8081 para que coincida con el puerto de tu aplicación
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8081  # Cambié a 8081 para que coincida con el puerto de tu aplicación
+
+autoscaling:
+  enabled: false  # Cambiar a true para habilitar el escalado automático
+  minReplicas: 1
+  maxReplicas: 5  # Ajusta el número máximo de réplicas según tus necesidades
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+volumes: []  # Agrega configuraciones de volúmenes si son necesarios
+volumeMounts: []  # Agrega configuraciones de montajes de volúmenes si son necesarios
+
+nodeSelector: {}  # Selección de nodos personalizada
+
+tolerations: []  # Toleraciones personalizadas
+
+affinity: {}  # Configuración de afinidad personalizada
+
