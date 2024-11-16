@@ -140,7 +140,7 @@ alertmanager:
       - name: 'null'
       - name: 'slack'
         slack_configs:
-          - api_url: 'https://hooks.slack.com/services/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'  # Tu webhook de Slack
+          - api_url: ''  # Tu webhook de Slack
             send_resolved: true
             channel: '#alarms-notifications-keepcoding-devops-10'   # Tu canal de Slack
             title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
