@@ -7,13 +7,6 @@ metadata:
     {{- with .Values.podLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/path: "/metrics"
-    prometheus.io/port: "8000"
-    {{- with .Values.podAnnotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

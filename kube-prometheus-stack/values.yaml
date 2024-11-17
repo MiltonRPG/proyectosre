@@ -24,7 +24,7 @@ kubeApiServer:
   enabled: true
 
 kubelet:
-  enabled: true
+  enabled: false
 
 kubeDns:
   enabled: false
@@ -117,6 +117,7 @@ defaultRules:
 
 # Configuración de Alertmanager
 alertmanager:
+  enabled: true
   config:
     global:
       resolve_timeout: 5m
@@ -140,9 +141,8 @@ alertmanager:
       - name: 'null'
       - name: 'slack'
         slack_configs:
-          - api_url: ''  # Tu webhook de Slack
-            send_resolved: true
-            channel: '#alarms-notifications-keepcoding-devops-10'   # Tu canal de Slack
+          - send_resolved: true
+            channel: '#alarms-notifications-keepcoding-devops'  # Tu canal de Slack
             title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] Monitoring Event Notification'
             text: |-
               {{ range .Alerts }}
@@ -152,6 +152,7 @@ alertmanager:
                 {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
                 {{ end }}
               {{ end }}
+            api_url: 'https://hooks.slack.com/services/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'  # Referencia al webhook que estará en values-secret.yaml
 
 # Habilitar Prometheus Operator
 prometheusOperator:
@@ -180,11 +181,37 @@ additionalPrometheusRulesMap:
             annotations:
               summary: 'Uso alto de memoria en {{ $labels.pod }}'
               description: 'El pod {{ $labels.pod }} está consumiendo más memoria de la solicitada'
+          - alert: MyAppHighCPUUsage
+            expr: sum(rate(container_cpu_usage_seconds_total{pod=~"myapp-.*", image!="", container!="POD"}[1m])) by (pod) >
+                  sum(kube_pod_container_resource_limits_cpu_cores{pod=~"myapp-.*"}) by (pod)
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Uso alto de CPU en {{ $labels.pod }}'
+              description: 'El pod {{ $labels.pod }} está consumiendo más CPU de la limitada'
+              
+  test-alert:
+    groups:
+      - name: test-alert-group
+        rules:
+          - alert: TestAlert
+            expr: vector(1)
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: 'Alerta de Prueba'
+              description: 'Esta es una alerta de prueba para verificar la integración con Slack.'
 
 # Configuración de Grafana (opcional)
 grafana:
-  plugins:
-    - grafana-piechart-panel
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folder: /var/lib/grafana/dashboards
+      searchNamespace: ALL
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
@@ -196,7 +223,9 @@ grafana:
           disableDeletion: false
           editable: true
           options:
-            path: /var/lib/grafana/dashboards/default
-  dashboards: {}
+            path: /var/lib/grafana/dashboards
+
+
+
 
 

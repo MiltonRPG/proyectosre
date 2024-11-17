@@ -27,7 +27,9 @@ securityContext: {}
 service:
   type: ClusterIP  # Tipo de servicio (NodePort, LoadBalancer o ClusterIP)
   port: 8081  # Cambié a 8081 porque tu aplicación FastAPI usa este puerto
-
+  selector:
+    app: myapp  # Selector de los pods que atenderá el servicio
+    
 ingress:
   enabled: false  # Cambiar a true si deseas habilitar Ingress
   className: ""
