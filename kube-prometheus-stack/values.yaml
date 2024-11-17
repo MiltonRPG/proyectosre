@@ -152,7 +152,7 @@ alertmanager:
                 {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
                 {{ end }}
               {{ end }}
-            api_url: 'https://hooks.slack.com/services/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'  # Referencia al webhook que estará en values-secret.yaml
+            api_url: 'URL WEBHOOK'  # Referencia al webhook que estará en values-secret.yaml
 
 # Habilitar Prometheus Operator
 prometheusOperator:
