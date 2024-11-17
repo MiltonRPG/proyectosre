@@ -136,11 +136,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Terraform - Compiled files
-*.tfstate
-*.tfstate.backup
-.terraform.tfstate.lock.info
-.terraform
+
 
 
 values.yaml
